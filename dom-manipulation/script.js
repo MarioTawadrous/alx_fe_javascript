@@ -58,4 +58,5 @@ let showRandomQuote = function () {
 
 let createAddQuoteForm = function () {};
 
-quoteButton.onclick = showRandomQuote;
+quoteButton.addEventListener("click", showRandomQuote);
+
