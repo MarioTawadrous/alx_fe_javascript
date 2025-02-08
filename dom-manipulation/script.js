@@ -1,5 +1,30 @@
 let quoteDisplay = document.getElementById("quoteDisplay");
 let quoteButton = document.getElementById("newQuote");
+let addNewQuoteButton = document.getElementById("addNewQuote");
+let formDiv = document.getElementById("form");
+
+let inputQuoteText = document.createElement("input");
+let inputQuoteCategory = document.createElement("input");
+let addQuoteButton = document.createElement("button");
+
+inputQuoteText.placeholder = "Enter a New quote";
+inputQuoteText.type = "text";
+inputQuoteText.id = "newQuoteText";
+
+inputQuoteCategory.placeholder = "Enter quote category";
+inputQuoteCategory.type = "text";
+inputQuoteCategory.id = "newQuoteCategory";
+
+addQuoteButton.innerText = "Add quote";
+
+quoteDisplay.style.display = "none";
+quoteButton.style.display = "none";
+addNewQuoteButton.style.display = "none";
+
+formDiv.appendChild(inputQuoteText);
+formDiv.appendChild(inputQuoteCategory);
+formDiv.appendChild(addQuoteButton);
+formDiv.style.display = "none";
 
 // let quotes = [{ id: 1, category: "", text: "" }];
 
@@ -56,7 +81,41 @@ let showRandomQuote = function () {
   return quotes[random];
 };
 
-let createAddQuoteForm = function () {};
+let createAddQuoteForm = function () {
+  // inputQuoteText.placeholder = "Enter a New quote";
+  // inputQuoteText.type = "text";
+  // inputQuoteText.id = "newQuoteText";
+
+  // inputQuoteCategory.placeholder = "Enter quote category";
+  // inputQuoteCategory.type = "text";
+  // inputQuoteCategory.id = "newQuoteCategory";
+
+  // addQuoteButton.innerText = "Add quote";
+
+  quoteDisplay.style.display = "none";
+  quoteButton.style.display = "none";
+  addNewQuoteButton.style.display = "none";
+
+  // formDiv.appendChild(inputQuoteText);
+  // formDiv.appendChild(inputQuoteCategory);
+  // formDiv.appendChild(addQuoteButton);
+
+  formDiv.style.display = "block";
+};
+
+let addNewQuote = function (newQuoteTextInput, newQuoteCategoryInput) {
+  quoteButton.style.display = "block";
+  addNewQuoteButton.style.display = "block";
+  formDiv.style.display = "none";
+
+  quotes.push({ category: newQuoteCategoryInput, text: newQuoteTextInput });
+  console.log(quotes);
+};
 
 quoteButton.addEventListener("click", showRandomQuote);
+addNewQuoteButton.addEventListener("click", createAddQuoteForm);
 
+addQuoteButton.addEventListener(
+  "click",
+  addNewQuote(inputQuoteCategory.innerHTML, inputQuoteCategory.innerText)
+);
