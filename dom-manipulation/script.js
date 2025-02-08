@@ -7,19 +7,21 @@ let inputQuoteText = document.createElement("input");
 let inputQuoteCategory = document.createElement("input");
 let addQuoteButton = document.createElement("button");
 
-inputQuoteText.placeholder = "Enter a New quote";
 inputQuoteText.type = "text";
+inputQuoteText.placeholder = "Enter a New quote";
 inputQuoteText.id = "newQuoteText";
+// let inputQuoteTextValue = inputQuoteText.value;
 
-inputQuoteCategory.placeholder = "Enter quote category";
 inputQuoteCategory.type = "text";
+inputQuoteCategory.placeholder = "Enter quote category";
 inputQuoteCategory.id = "newQuoteCategory";
+// let inputQuoteCategoryValue = inputQuoteCategory.value;
 
 addQuoteButton.innerText = "Add quote";
 
-quoteDisplay.style.display = "none";
-quoteButton.style.display = "none";
-addNewQuoteButton.style.display = "none";
+// quoteDisplay.style.display = "none";
+// quoteButton.style.display = "none";
+// addNewQuoteButton.style.display = "none";
 
 formDiv.appendChild(inputQuoteText);
 formDiv.appendChild(inputQuoteCategory);
@@ -72,13 +74,14 @@ const quotes = [
 ];
 
 let showRandomQuote = function () {
+  quoteDisplay.style.display = "block";
   console.log("Show New Button is clicked");
   let random = Math.floor(Math.random() * quotes.length);
   let randomQuote = quotes[random];
 
   quoteDisplay.innerHTML = `<p>Quote category: ${randomQuote.category}</p>
   <p>Quote: ${randomQuote.text}</p>`;
-  return quotes[random];
+  // return quotes[random];
 };
 
 let createAddQuoteForm = function () {
@@ -103,19 +106,21 @@ let createAddQuoteForm = function () {
   formDiv.style.display = "block";
 };
 
-let addNewQuote = function (newQuoteTextInput, newQuoteCategoryInput) {
+// let addNewQuote = function (inputQuoteCategoryValue, inputQuoteTextValue) {
+let addNewQuote = function () {
+  let inputQuoteCategoryValue = inputQuoteCategory.value;
+  let inputQuoteTextValue = inputQuoteText.value;
+
+  quotes.push({ category: inputQuoteCategoryValue, text: inputQuoteTextValue });
+  console.log(quotes);
+
   quoteButton.style.display = "block";
   addNewQuoteButton.style.display = "block";
   formDiv.style.display = "none";
-
-  quotes.push({ category: newQuoteCategoryInput, text: newQuoteTextInput });
-  console.log(quotes);
+  addNewQuoteButton.style.display = "block";
 };
 
 quoteButton.addEventListener("click", showRandomQuote);
 addNewQuoteButton.addEventListener("click", createAddQuoteForm);
 
-addQuoteButton.addEventListener(
-  "click",
-  addNewQuote(inputQuoteCategory.innerHTML, inputQuoteCategory.innerText)
-);
+addQuoteButton.addEventListener("click", addNewQuote);
