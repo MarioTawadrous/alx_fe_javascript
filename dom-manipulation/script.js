@@ -1,35 +1,5 @@
-let quoteDisplay = document.getElementById("quoteDisplay");
-let quoteButton = document.getElementById("newQuote");
-let addNewQuoteButton = document.getElementById("addNewQuote");
-let formDiv = document.getElementById("form");
-
-let inputQuoteText = document.createElement("input");
-let inputQuoteCategory = document.createElement("input");
-let addQuoteButton = document.createElement("button");
-
-inputQuoteText.type = "text";
-inputQuoteText.placeholder = "Enter a New quote";
-inputQuoteText.id = "newQuoteText";
-// let inputQuoteTextValue = inputQuoteText.value;
-
-inputQuoteCategory.type = "text";
-inputQuoteCategory.placeholder = "Enter quote category";
-inputQuoteCategory.id = "newQuoteCategory";
-// let inputQuoteCategoryValue = inputQuoteCategory.value;
-
-addQuoteButton.innerText = "Add quote";
-
-// quoteDisplay.style.display = "none";
-// quoteButton.style.display = "none";
-// addNewQuoteButton.style.display = "none";
-
-formDiv.appendChild(inputQuoteText);
-formDiv.appendChild(inputQuoteCategory);
-formDiv.appendChild(addQuoteButton);
-formDiv.style.display = "none";
-
-// let quotes = [{ id: 1, category: "", text: "" }];
-
+// in code quotes
+/*
 const quotes = [
   {
     category: "Motivation",
@@ -73,15 +43,138 @@ const quotes = [
   },
 ];
 
+*/
+
+// Working with local storage
+
+// Initailize quotes array from local storage or as an empty array
+let quotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+// Function to save quotes to local storage
+let saveQuotes = function () {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+};
+
+// Function to add new quote
+let addQuote = function (quote) {
+  quotes.push(quote);
+  saveQuotes();
+};
+
+// function to load quotes on page load
+let loadQuotes = function () {
+  const stordQuotes = JSON.parse(localStorage.getItem("quotes"));
+  if (stordQuotes) {
+    quotes = saveQuotes;
+  }
+};
+
+// Call loadQuotes fumction on page loads
+window.load = loadQuotes;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Working with session storage
+
+let currentQuote = null;
+let lastViewedQuote = null;
+
+// Function to save last viewed quote in session storage
+let saveLastViewedQuote = function () {
+  sessionStorage.setItem("lastViewedQuote", JSON.stringify(currentQuote));
+};
+
+// Function to retreive last viewed quote from session storage
+let loadLastViewedQuote = function () {
+  lastViewedQuote = JSON.parse(sessionStorage.getItem("lastViewedQuote"));
+
+  if (lastViewedQuote) {
+    quoteDisplay.style.display = "block";
+    currentQuote = lastViewedQuote;
+
+    quoteDisplay.innerHTML = `<p>Quote category: ${lastViewedQuote.category}</p>
+  <p>Quote: ${lastViewedQuote.text}</p>`;
+  }
+};
+
+window.load = loadLastViewedQuote; // this does not work on the loading of the page
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Working with JSON Data export and import
+
+// Function to export quotes as a JSON file
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes);
+  const dataBlob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(dataBlob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "quotes.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// Function to import quotes from a JSON file
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (event) {
+    const importedQuotes = JSON.parse(event.target.result);
+    quotes.push(...importedQuotes);
+    saveQuotes();
+    alert("Quotes imported successfully!");
+    displayQuotes(); // Refresh the displayed quotes
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// Add a file input to the HTML
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let quoteDisplay = document.getElementById("quoteDisplay");
+let quoteButton = document.getElementById("newQuote");
+let addNewQuoteButton = document.getElementById("addNewQuote");
+let formDiv = document.getElementById("form");
+
+let inputQuoteText = document.createElement("input");
+let inputQuoteCategory = document.createElement("input");
+let addQuoteButton = document.createElement("button");
+
+inputQuoteText.type = "text";
+inputQuoteText.placeholder = "Enter a New quote";
+inputQuoteText.id = "newQuoteText";
+// let inputQuoteTextValue = inputQuoteText.value;
+
+inputQuoteCategory.type = "text";
+inputQuoteCategory.placeholder = "Enter quote category";
+inputQuoteCategory.id = "newQuoteCategory";
+// let inputQuoteCategoryValue = inputQuoteCategory.value;
+
+addQuoteButton.innerText = "Add quote";
+
+// quoteDisplay.style.display = "none";
+// quoteButton.style.display = "none";
+// addNewQuoteButton.style.display = "none";
+
+formDiv.appendChild(inputQuoteText);
+formDiv.appendChild(inputQuoteCategory);
+formDiv.appendChild(addQuoteButton);
+formDiv.style.display = "none";
+
+// let quotes = [{ id: 1, category: "", text: "" }];
+
 let showRandomQuote = function () {
   quoteDisplay.style.display = "block";
   console.log("Show New Button is clicked");
   let random = Math.floor(Math.random() * quotes.length);
   let randomQuote = quotes[random];
+  currentQuote = randomQuote;
 
   quoteDisplay.innerHTML = `<p>Quote category: ${randomQuote.category}</p>
   <p>Quote: ${randomQuote.text}</p>`;
-  // return quotes[random];
+
+  saveLastViewedQuote();
 };
 
 let createAddQuoteForm = function () {
@@ -111,13 +204,17 @@ let addNewQuote = function () {
   let inputQuoteCategoryValue = inputQuoteCategory.value;
   let inputQuoteTextValue = inputQuoteText.value;
 
-  quotes.push({ category: inputQuoteCategoryValue, text: inputQuoteTextValue });
+  // This for variable quotes within code
+  // quotes.push({ category: inputQuoteCategoryValue, text: inputQuoteTextValue });
   console.log(quotes);
 
   quoteButton.style.display = "block";
   addNewQuoteButton.style.display = "block";
   formDiv.style.display = "none";
   addNewQuoteButton.style.display = "block";
+
+  // This for local storage save
+  addQuote({ category: inputQuoteCategoryValue, text: inputQuoteTextValue });
 };
 
 quoteButton.addEventListener("click", showRandomQuote);
