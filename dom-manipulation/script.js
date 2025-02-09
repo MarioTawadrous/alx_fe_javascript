@@ -62,12 +62,12 @@ let addQuote = function (quote) {
 };
 
 // function to load quotes on page load
-let loadQuotes = function () {
-  const stordQuotes = JSON.parse(localStorage.getItem("quotes"));
-  if (stordQuotes) {
-    quotes = saveQuotes;
-  }
-};
+// let loadQuotes = function () {
+//   const stordQuotes = JSON.parse(localStorage.getItem("quotes"));
+//   if (stordQuotes) {
+//     quotes = saveQuotes;
+//   }
+// };
 
 // Call loadQuotes fumction on page loads
 window.load = loadQuotes;
@@ -188,6 +188,107 @@ function loadQuotes() {
 }
 
 window.onload = loadQuotes;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////             Syncing Data with Server and Implementing Conflict Resolution            ////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const API_URL = "http://localhost:3000/quotes"; // Replace with your API URL
+
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error("Failed to fetch quotes");
+    const serverQuotes = await response.json();
+    return serverQuotes;
+  } catch (error) {
+    console.error("Error fetching quotes:", error);
+    return [];
+  }
+}
+
+// Function to sync local data with server data
+async function syncData() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  // Merge server and local quotes (server takes precedence)
+  const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
+
+  // Save merged quotes to local storage
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+  displayQuotes(mergedQuotes); // Refresh the UI
+}
+
+// Function to merge quotes (simple conflict resolution)
+function mergeQuotes(localQuotes, serverQuotes) {
+  const quoteMap = new Map();
+
+  // Add local quotes to the map
+  localQuotes.forEach((quote) => quoteMap.set(quote.id, quote));
+
+  // Overwrite with server quotes (server takes precedence)
+  serverQuotes.forEach((quote) => quoteMap.set(quote.id, quote));
+
+  return Array.from(quoteMap.values());
+}
+
+// Periodically sync data (e.g., every 10 seconds)
+setInterval(syncData, 10000);
+
+// Function to show a notification
+function showNotification(message) {
+  const notification = document.createElement("div");
+  notification.className = "notification";
+  notification.textContent = message;
+  document.body.appendChild(notification);
+
+  setTimeout(() => notification.remove(), 3000); // Remove after 3 seconds
+}
+
+// Update syncData to show notifications
+async function syncData() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
+
+  if (mergedQuotes.length !== localQuotes.length) {
+    showNotification("Data updated from server.");
+  }
+
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+  // displayQuotes(mergedQuotes);
+}
+
+// Function to manually resolve conflicts
+async function resolveConflicts() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  const conflicts = findConflicts(localQuotes, serverQuotes);
+
+  if (conflicts.length > 0) {
+    const choice = confirm("Conflicts detected. Use server data?");
+    const resolvedQuotes = choice ? serverQuotes : localQuotes;
+    localStorage.setItem("quotes", JSON.stringify(resolvedQuotes));
+    displayQuotes(resolvedQuotes);
+    showNotification("Conflicts resolved.");
+  } else {
+    showNotification("No conflicts found.");
+  }
+}
+
+// Function to find conflicts
+function findConflicts(localQuotes, serverQuotes) {
+  return localQuotes.filter((localQuote, index) => {
+    const serverQuote = serverQuotes[index];
+    return serverQuote && localQuote.text !== serverQuote.text;
+  });
+}
+
+// Add a button to manually resolve conflicts
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
