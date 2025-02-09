@@ -100,7 +100,8 @@ let loadLastViewedQuote = function () {
 window.load = loadLastViewedQuote; // this does not work on the loading of the page
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Working with JSON Data export and import
+//                             Working with JSON Data export and import                                      ////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to export quotes as a JSON file
 function exportToJsonFile() {
@@ -131,6 +132,65 @@ function importFromJsonFile(event) {
 
 // Add a file input to the HTML
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//          Creating a Dynamic Content Filtering System Using Web Storage and JSON          /////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Function to populate categories in the dropdown
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+  const categories = [...new Set(quotes.map((quote) => quote.category))]; // Extract unique categories
+
+  // Clear existing options (except "All Categories")
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
+  // Add categories to the dropdown
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+
+  // Restore the last selected filter
+  const lastFilter = localStorage.getItem("lastFilter");
+  if (lastFilter) {
+    categoryFilter.value = lastFilter;
+  }
+}
+
+// Function to filter quotes by category
+function filterQuotes() {
+  const categoryFilter = document.getElementById("categoryFilter");
+  const selectedCategory = categoryFilter.value;
+
+  // Save the selected filter to local storage
+  localStorage.setItem("lastFilter", selectedCategory);
+
+  // Filter quotes
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter((quote) => quote.category === selectedCategory);
+
+  // Display filtered quotes
+  //displayQuotes(filteredQuotes);
+}
+
+// Function to load quotes and categories on page load
+function loadQuotes() {
+  const storedQuotes = JSON.parse(localStorage.getItem("quotes"));
+  if (storedQuotes) {
+    quotes = storedQuotes;
+    populateCategories();
+    filterQuotes(); // Apply the last selected filter
+  }
+}
+
+window.onload = loadQuotes;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 let quoteDisplay = document.getElementById("quoteDisplay");
 let quoteButton = document.getElementById("newQuote");
