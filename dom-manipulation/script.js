@@ -195,7 +195,7 @@ window.onload = loadQuotes;
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock API endpoint
 
-// let quotes = JSON.parse(localStorage.getItem("quotes")) || [];
+// let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
 
 // Function to save quotes to local storage
 function saveQuotes() {
@@ -246,8 +246,8 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// Function to sync local data with server data
-async function syncData() {
+// Function to sync quotes between local storage and server
+async function syncQuotes() {
   const serverQuotes = await fetchQuotesFromServer();
   const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
 
@@ -393,7 +393,7 @@ async function loadQuotes() {
 window.onload = loadQuotes;
 
 // Periodically sync data (e.g., every 10 seconds)
-setInterval(syncData, 10000);
+setInterval(syncQuotes, 10000);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
