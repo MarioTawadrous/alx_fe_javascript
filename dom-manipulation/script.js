@@ -193,7 +193,7 @@ window.onload = loadQuotes;
 ///////             Syncing Data with Server and Implementing Conflict Resolution            ////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const API_URL = "http://localhost:3000/quotes"; // Replace with your API URL
+const API_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock API endpoint
 
 // Function to fetch quotes from the server
 async function fetchQuotesFromServer() {
