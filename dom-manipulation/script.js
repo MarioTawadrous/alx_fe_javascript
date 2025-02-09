@@ -192,10 +192,9 @@ window.onload = loadQuotes;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////             Syncing Data with Server and Implementing Conflict Resolution            ////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const API_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock API endpoint
 
-// let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
+// let quotes = JSON.parse(localStorage.getItem("quotes")) || [];
 
 // Function to save quotes to local storage
 function saveQuotes() {
@@ -254,7 +253,7 @@ async function syncQuotes() {
   const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
 
   if (mergedQuotes.length !== localQuotes.length) {
-    showNotification("Data updated from server.");
+    showNotification("Quotes synced with server!");
   }
 
   localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
@@ -275,7 +274,7 @@ function showNotification(message) {
   notification.className = "notification";
   notification.textContent = message;
   document.body.appendChild(notification);
-  setTimeout(() => notification.remove(), 3000);
+  setTimeout(() => notification.remove(), 3000); // Remove after 3 seconds
 }
 
 // Function to manually resolve conflicts
